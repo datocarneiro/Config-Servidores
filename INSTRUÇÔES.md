@@ -178,3 +178,6 @@ sudo systemctl status ssh
 #opção do comando journalctl: -t (identifier), x (catalog), e (pager-end), u (unit)
 sudo journalctl -t sshd
 sudo journalctl -xeu ssh
+
+#verificando informações detalhadas dos usuários logados no Ubuntu Server
+sudo w
