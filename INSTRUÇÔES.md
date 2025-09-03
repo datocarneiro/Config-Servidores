@@ -135,7 +135,7 @@ sudo wget -v -O /etc/issue.net https://raw.githubusercontent.com/datocarneiro/Co
 
 #atualizando o arquivo de configuração do OpenSSH Server do Github
 #opção do comando wget: -v (verbose), -O (output file)
-sudo wget -v -O /etc/ssh/sshd_config https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/sshs.config
+sudo wget -v -O /etc/ssh/sshd_config https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/sshd.config
 
 #editando o arquivo de configuração do OpenSSH Server
 sudo vim /etc/ssh/sshd_config
