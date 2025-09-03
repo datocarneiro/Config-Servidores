@@ -119,6 +119,8 @@ sudo hwclock --systohc
 sudo hwclock --hctosys
 ```
 _______________________________________________________________________________________________________________________
+_______________________________________________________________________________________________________________________
+_______________________________________________________________________________________________________________________
 
 # 02_ Atualizando e editando os arquivos de configuração do OpenSSH Server e do Banner
 
@@ -127,13 +129,13 @@ ________________________________________________________________________________
 #opção do comando cp: -v (verbose)
 sudo cp -v /etc/ssh/sshd_config /etc/ssh/sshd_config.old
 
-#atualizando o arquivo de configuração do OpenSSH Server do Github
-#opção do comando wget: -v (verbose), -O (output file)
-sudo wget -v -O /etc/ssh/sshd_config https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/sshs.config
-
 #atualizando arquivo de configuração do Banner do Ubuntu Server do Github
 #opção do comando wget: -v (verbose), -O (output file)
 sudo wget -v -O /etc/issue.net https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/banner-dato-menor.txt
+
+#atualizando o arquivo de configuração do OpenSSH Server do Github
+#opção do comando wget: -v (verbose), -O (output file)
+sudo wget -v -O /etc/ssh/sshd_config https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/sshd.config
 
 #editando o arquivo de configuração do OpenSSH Server
 sudo vim /etc/ssh/sshd_config
@@ -178,3 +180,6 @@ sudo systemctl status ssh
 #opção do comando journalctl: -t (identifier), x (catalog), e (pager-end), u (unit)
 sudo journalctl -t sshd
 sudo journalctl -xeu ssh
+
+#verificando informações detalhadas dos usuários logados no Ubuntu Server
+sudo w
