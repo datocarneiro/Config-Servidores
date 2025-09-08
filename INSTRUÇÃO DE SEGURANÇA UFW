@@ -1,0 +1,271 @@
+# Guia de Uso do UFW (Uncomplicated Firewall)
+
+## 📄 Resumo
+
+O **UFW** é uma ferramenta simplificada para gerenciar o firewall no servidor.  
+Ele serve como uma interface amigável para o **iptables** ou **nftables**, permitindo configurar regras de forma simples sem precisar lidar com comandos complexos de firewall do kernel.  
+
+Com o UFW, é possível:
+
+- Permitir ou negar acesso a portas e serviços.
+- Criar regras por IP ou rede.
+- Ativar logs de conexão.
+- Garantir a segurança básica do servidor de forma rápida.
+
+---
+
+## 💻 Instalação
+
+No Ubuntu, o UFW geralmente já vem instalado. Para garantir ou instalar manualmente:
+
+```bash
+sudo apt update
+sudo apt install ufw -y
+```
+# **⚠️ Atenção, antes de habilitar o UFW se estiver remoto via SSSH⚠️**
+> ⚠️OBSERVAÇÃO IMPORTANTE: CUIDADO QUANDO VOCÊ HABILITAR O UFW UTILIZANDO UMA CONEXÃO REMOTA, APÓS DIGITAR O COMANDO: sudo ufw enable A SEGUINTE MENSAGEM É MOSTRADA: Command may disrupt existing ssh connections (O comando pode interromper as conexões ssh existentes), EM ALGUNS CENÁRIOS PODE ACONTECER A QUEDA (DESCONECTAR) DA CONEXÃO E VOCÊ NÃO CONSEGUIR MAIS ACESSAR O SERVIDOR REMOTAMENTE.
+
+Habilitando e iniciando o Firewall UFW
+```bash
+sudo ufw enable
+```
+Verifique o status do UFW:
+```bash
+sudo ufw status verbose
+```
+
+Verificando o serviço do UFW
+```bash
+sudo systemctl status ufw
+sudo systemctl restart ufw
+sudo systemctl stop ufw
+sudo systemctl start ufw
+```
+Analisando os Log's e mensagens de erro do UFW
+```bash
+# opção do comando journalctl: x (catalog), e (pager-end), u (unit)
+sudo journalctl -xeu ufw
+```
+---
+
+## 🔹 Entendendo as Regras
+
+O UFW funciona com **regras de permissão ou negação** para serviços, portas ou IPs:
+
+* `allow` → Permite acesso.
+* `deny` → Bloqueia acesso. (não informa nada ao host apenas bloqueia)
+* `reject` → Rejeita acesso (mas informa o host que foi rejeitado).
+* `limit` → Permite acesso com proteção contra ataques de força bruta.
+* `disable` → Desabilita
+
+Exemplos:
+
+```bash
+sudo ufw allow 22          # Permite SSH
+sudo ufw deny 21           # Bloqueia FTP
+sudo ufw allow 80/tcp      # Permite HTTP
+sudo ufw limit 22/tcp      # Limita tentativas SSH
+sudo ufw allow from 192.168.1.100   # Permite acesso de um IP específico
+```
+
+
+## 🛡️ Melhores Práticas
+
+1. **Permitir somente serviços essenciais**:
+
+* SSH (`22`) para acesso remoto
+* HTTP (`80`) e HTTPS (`443`) se houver web server
+
+2. **Bloquear tudo por padrão**:
+
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+```
+
+3. **Usar `limit` para serviços sensíveis** (como SSH):
+
+```bash
+sudo ufw limit 22/tcp
+```
+
+Comparação de Regras no UFW
+
+| Comando                          | O que faz                                                                 | Quando usar                                                                 |
+|----------------------------------|---------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| `sudo ufw allow 22/tcp`          | Permite livre acesso à porta (no caso, SSH).                              | Quando precisa liberar um serviço para todos os clientes.                    |
+| `sudo ufw deny 21/tcp`           | Bloqueia o acesso à porta (no caso, FTP).                                 | Quando quer garantir que um serviço/porta não seja acessível externamente.   |
+| `sudo ufw limit 22/tcp`          | Permite conexões, mas limita tentativas excessivas (6 em 30s por IP).     | Ideal para portas críticas (SSH, SMTP), como proteção contra força bruta.    |
+
+
+
+---
+
+## Para listar regras atuais:
+
+```bash
+sudo ufw status numbered
+```
+
+Para remover uma regra específica:
+
+```bash
+sudo ufw delete [NÚMERO_DA_REGRA]
+```
+
+
+# 05_ Localização dos Arquivos e Diretório de Configuração do UFW no Ubuntu Server
+```bash
+/etc/default/ufw   <-- Arquivo de inicialização padrão do UFW
+/etc/ufw/*         <-- Diretório padrão das configurações das regras do UFW
+/var/log/ufw.log   <-- Arquivo de Log padrão do UFW
+/var/log/syslog    <-- Logs do UFW no sistema (usar o filtro: cat /var/log/syslog | grep -i ufw)
+/var/log/kern.log  <-- Logs do UFW no Kernel (usar o filtro: cat /var/log/syslog | grep -i ufw)
+```
+---
+
+## ⚙️ Como Aplicar Regras
+
+1. **Ativar o UFW**:
+
+```bash
+sudo ufw enable
+```
+
+2. **Desativar o UFW (se necessário)**:
+
+```bash
+sudo ufw disable
+```
+
+3. **Resetar para o estado padrão**:
+
+```bash
+sudo ufw reset
+```
+
+4. **Habilitar logs** (útil para monitorar acessos):
+
+```bash
+sudo ufw logging on
+```
+
+---
+
+## 🛡️ Melhores Práticas
+
+1. **Permitir somente serviços essenciais**:
+
+* SSH (`22`) para acesso remoto
+* HTTP (`80`) e HTTPS (`443`) se houver web server
+
+2. **Bloquear tudo por padrão**:
+
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+```
+
+3. **Usar `limit` para serviços sensíveis** (como SSH):
+
+```bash
+sudo ufw limit 22/tcp
+```
+
+4. **Restringir acesso por IP quando possível**:
+
+```bash
+sudo ufw allow from 192.168.1.100 to any port 22
+```
+
+5. **Verificar regras e logs periodicamente**:
+
+```bash
+sudo ufw status verbose
+sudo ufw show added
+sudo tail -f /var/log/ufw.log
+```
+
+6. **Integrar com Docker ou outros serviços com atenção**:
+
+* O Docker pode adicionar regras diretamente ao iptables.
+* Para servidores com containers, verifique se as portas expostas estão corretamente liberadas no UFW.
+
+---
+
+> ⚠️ Lembre-se: Sempre teste as regras antes de aplicar em produção, para evitar perder acesso SSH ao servidor.
+
+# Configurando o Nível de Log (LOGGING) do UFW no Ubuntu Server
+
+> OBSERVAÇÃO IMPORTANTE: no UFW temos basicamente 05 (cinco) níveis de Log: off (desligado), low (baixo), medium (médio), high (alto) e full (completo/debug).
+
+o que muda é as informações que serão registradas, então temos que pensar a nivel de armazenamento o tanto de logs que queremos registrar 
+
+Recomendado é `MEDUM`
+
+```bash
+#Habilitando os Logs das Regras do UFW
+sudo ufw logging on
+  Logging enabled
+
+#Configurando o Nível de Log de Baixo (LOW) para Médio (MEDIUM)
+sudo ufw logging medium
+  Logging enabled
+
+#Verificando as Regras Detalhadas padrão do UFW
+sudo ufw status verbose
+```
+# Liberando (ALLOW) a Entrada (INCOMING) e Saída (OUTGOING) da Interface de Loopback do UFW no Ubuntu Server
+
+> OBSERVAÇÃO IMPORTANTE: por padrão, o UFW no Ubuntu Server adiciona automaticamente regras de IPv6 para regras da Interface de Loopback.
+
+```bash
+#Liberando (ALLOW) a Entrada (IN) da Interface (ON) Loopback (LO)
+sudo ufw allow in on lo
+
+#Liberando (ALLOW) a Saída (OUT) da Interface (ON) Loopback (LO)
+sudo ufw allow out on lo
+
+#Verificando as Regras Detalhadas padrão do UFW
+sudo ufw status verbose
+
+#Verificando o Status das Regras (RULES) Numeradas (NUMBERED) do UFW
+sudo ufw status numbered
+```
+# Liberando (ALLOW) as Saídas (OUTGOING) Básicas do UFW no Ubuntu Server
+>⚠️ OBSERVAÇÃO IMPORTANTE: por padrão, o UFW no Ubuntu Server adiciona automaticamente regras de IPv6 para regras criadas de forma simples ou básica.
+
+>⚠️ OBSERVAÇÃO IMPORTANTE: quando você utilizar a opção: comment (comentário) do UFW é recomendo não utilizar acentuação e sempre dentro de Aspas Simples (não crase).
+
+>⚠️ OBSERVAÇÃO IMPORTANTE: muito cuidado na hora de configurar a Sequência de Regras do UFW, ele segue o padrão de: Primeira Regra Correspondente (de cima para baixo), Ação da Regra (allow, deny, reject), Regras Subsequentes (continua se não encontrar uma regra) e Regra Padrão (default).
+
+>⚠️ OBSERVAÇÃO IMPORTANTE: o UFW também processa as regas da seguinte forma: Regras de Porta Específica (maior prioridade), Regras de Protocolo e Porta (alta prioridade), Regras de Aplicação de Serviço (prioridade intermediaria), Regras de Subnet (menor prioridade), Regras de Interface (menor prioridade) e Regras de App Profile (essa regra tem menor prioridade e sempre fica por último).
+
+```bash
+
+#Regra de liberação (ALLOW) de Saída (OUT) da Consulta do Protocolo DNS (53/udp)
+sudo ufw allow out 53/udp comment 'Liberando a saida para consulta do DNS'
+
+#Regra de liberação (ALLOW) de Saída (OUT) da Navegação do Protocolo HTTP (80/tcp)
+sudo ufw allow out 80/tcp comment 'Liberando a saida para navegação do HTTP'
+
+#Regra de liberação (ALLOW) de Saída (OUT) da Navegação do Protocolo HTTPS (443/tcp)
+sudo ufw allow out 443/tcp comment 'Liberando a saida para navegação do HTTPS'
+
+#Regra de liberação (ALLOW) de Saída (OUT) do Protocolo NTP (123/udp)
+sudo ufw allow out 123/udp comment 'Liberando a saida para sincronismo do NTP'
+
+#Verificando as Regras Detalhadas padrão do UFW
+sudo ufw status verbose
+
+#Verificando as Regras Detalhadas padrão do UFW em modo Numerado
+sudo ufw status numbered
+
+#Resolvendo o nome DNS do Google
+nslookup google.com
+
+#Pingando o nome DNS do Google
+ping google.com
+
+#Atualizando as Listas do Sources.List do Apt
+sudo apt update
