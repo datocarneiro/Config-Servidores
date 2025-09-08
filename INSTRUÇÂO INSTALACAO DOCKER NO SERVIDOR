@@ -130,6 +130,20 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 
 ---
 
+
+### **Localização dos Arquivos de Configuração do Docker-CE**
+```bash
+/etc/docker/       <-- Diretório de configuração do Docker
+/var/lib/docker/   <-- Diretório raiz de dados do Docker
+```
+
+### **Interface e Endereçamento IPv4 padrão do Docker-CE**
+#verificando a interface e endereço IPv4 do Docker-CE
+```bash
+sudo ifconfig docker0
+  docker0: 172.17.0.1/16 (255.255.0.0)
+```
+
 ### 9. **Testar a instalação**
 
 ```bash
