@@ -1,0 +1,175 @@
+# **Roadmap de instalação do Docker Engine no Ubuntu Server 24.04 via CL/**
+ seguindo **exatamente** a documentação oficial mais recente baseado em 08/09/2025.
+
+---
+
+
+### 1. **Atualizar**
+
+```bash
+sudo apt update
+```
+
+🔎 *Motivo*: garante que o `apt` conheça as versões mais novas dos pacotes antes da instalação.
+
+---
+
+### 2. **Instalar dependências necessárias**
+
+```bash
+sudo apt-get install ca-certificates curl
+```
+
+🔎 *Motivo*:
+
+* `ca-certificates` → permite validar certificados HTTPS.
+* `curl` → usado para baixar arquivos, como a chave GPG.
+
+---
+
+### 3. **Criar diretório para armazenar a chave GPG**
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+```
+
+🔎 *Motivo*:
+Esse diretório `/etc/apt/keyrings` é onde o Ubuntu armazena as chaves de repositórios externos de forma organizada e segura.
+
+---
+
+### 4. **Baixar a chave GPG oficial do Docker**
+
+```bash
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+```
+
+🔎 *Motivo*:
+Essa chave permite que o `apt` verifique a autenticidade dos pacotes Docker.
+
+> Hoje o `apt` já aceita `.asc`, por isso não precisa mais do `gpg --dearmor`.
+
+---
+
+### 5. **Dar permissão de leitura à chave**
+
+```bash
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+```
+
+🔎 *Motivo*:
+Garante que qualquer usuário ou processo que use o `apt` consiga ler a chave para validar os pacotes.
+
+---
+
+### 6. **Adicionar o repositório oficial do Docker**
+
+Show, Jonathas 👌 vamos detalhar esses dois pontos **com base na documentação oficial do Docker**:
+
+---
+
+
+```bash
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+### ✅ explicando por partes do comando.
+
+* `dpkg --print-architecture` → retorna a arquitetura da máquina (`amd64`, `arm64`, etc.).
+  🔎 Isso garante que você baixe os pacotes certos para o seu hardware.
+
+* `. /etc/os-release && echo "$VERSION_CODENAME"` → lê as variáveis do arquivo `/etc/os-release`.
+  Dentro desse arquivo existe a variável `VERSION_CODENAME`.
+
+  * No **Ubuntu 24.04 LTS**, o codename é **noble**.
+  * No Ubuntu 22.04 LTS → **jammy**.
+  * No Ubuntu 20.04 LTS → **focal**.
+
+Ou seja, no seu caso (24.04), esse comando se expande automaticamente para algo assim:
+
+```bash
+deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu noble stable
+```
+
+📌 *Motivo*: evita ter que escrever manualmente o codename. Assim o script é portátil entre diferentes versões do Ubuntu.
+
+---
+
+Quer que eu monte pra você um **exemplo real expandido** mostrando como ficaria o `sources.list.d/docker.list` no **Ubuntu 24.04 (noble)**, já substituindo as variáveis?
+
+
+---
+
+### 7. **Atualizar os pacotes novamente**
+
+```bash
+sudo apt-get update
+```
+
+🔎 *Motivo*:
+Agora o `apt` vai buscar pacotes também no repositório oficial do Docker.
+
+---
+
+### 8. **Instalar o Docker Engine e ferramentas**
+
+```bash
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+🔎 *Motivo*:
+
+* `docker-ce` → engine principal do Docker.
+* `docker-ce-cli` → interface de linha de comando (`docker`).
+* `containerd.io` → runtime que executa os containers.
+* `docker-buildx-plugin` → build avançado de imagens.
+* `docker-compose-plugin` → permite rodar `docker compose`.
+
+---
+
+### 9. **Testar a instalação**
+
+```bash
+sudo docker run hello-world
+```
+
+🔎 *Motivo*:
+Baixa e executa um container de teste para verificar se o Docker está funcionando corretamente.
+
+---
+
+### 10.  **dicionar usuário ao grupo `docker**
+
+Depois de instalar o Docker, por padrão **só o root pode rodar `docker`**.
+Se você tentar rodar `docker ps` como usuário normal, vai dar erro de permissão.
+
+A doc oficial recomenda criar o grupo `docker` (se não existir) e adicionar seu usuário:
+
+```bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### ✅ Quebrando por partes:
+
+* `sudo groupadd docker` → cria o grupo chamado `docker` (normalmente ele já é criado junto com a instalação, mas esse comando garante).
+* `sudo usermod -aG docker $USER` → adiciona seu usuário atual ao grupo `docker`.
+* `newgrp docker` → aplica a mudança imediatamente **sem precisar reiniciar**.
+
+📌 *Motivo*:
+
+* Isso permite rodar `docker run`, `docker ps` etc. sem `sudo`.
+* Mas ⚠️ **atenção**: a doc também alerta que adicionar usuários ao grupo `docker` dá **privilégios de root**, pois quem controla o Docker pode acessar todo o sistema.
+
+
+
+---
+
+✅ Pronto, com isso seu **Ubuntu Server 24.04** terá o **Docker Engine instalado via CLI** seguindo a **doc oficial**.
+
+---
+
