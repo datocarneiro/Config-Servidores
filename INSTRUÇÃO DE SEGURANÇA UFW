@@ -69,34 +69,6 @@ sudo ufw allow from 192.168.1.100   # Permite acesso de um IP específico
 ```
 
 
-## 🛡️ Melhores Práticas
-
-1. **Permitir somente serviços essenciais**:
-
-* SSH (`22`) para acesso remoto
-* HTTP (`80`) e HTTPS (`443`) se houver web server
-
-2. **Bloquear tudo por padrão**:
-
-```bash
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-```
-
-3. **Usar `limit` para serviços sensíveis** (como SSH):
-
-```bash
-sudo ufw limit 22/tcp
-```
-
-Comparação de Regras no UFW
-
-| Comando                          | O que faz                                                                 | Quando usar                                                                 |
-|----------------------------------|---------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| `sudo ufw allow 22/tcp`          | Permite livre acesso à porta (no caso, SSH).                              | Quando precisa liberar um serviço para todos os clientes.                    |
-| `sudo ufw deny 21/tcp`           | Bloqueia o acesso à porta (no caso, FTP).                                 | Quando quer garantir que um serviço/porta não seja acessível externamente.   |
-| `sudo ufw limit 22/tcp`          | Permite conexões, mas limita tentativas excessivas (6 em 30s por IP).     | Ideal para portas críticas (SSH, SMTP), como proteção contra força bruta.    |
-
 
 
 ---
@@ -113,15 +85,6 @@ Para remover uma regra específica:
 sudo ufw delete [NÚMERO_DA_REGRA]
 ```
 
-
-# 05_ Localização dos Arquivos e Diretório de Configuração do UFW no Ubuntu Server
-```bash
-/etc/default/ufw   <-- Arquivo de inicialização padrão do UFW
-/etc/ufw/*         <-- Diretório padrão das configurações das regras do UFW
-/var/log/ufw.log   <-- Arquivo de Log padrão do UFW
-/var/log/syslog    <-- Logs do UFW no sistema (usar o filtro: cat /var/log/syslog | grep -i ufw)
-/var/log/kern.log  <-- Logs do UFW no Kernel (usar o filtro: cat /var/log/syslog | grep -i ufw)
-```
 ---
 
 ## ⚙️ Como Aplicar Regras
@@ -148,6 +111,16 @@ sudo ufw reset
 
 ```bash
 sudo ufw logging on
+```
+
+Diretórios padrão do UFW
+
+```bash
+/etc/default/ufw   <-- Arquivo de inicialização padrão do UFW
+/etc/ufw/*         <-- Diretório padrão das configurações das regras do UFW
+/var/log/ufw.log   <-- Arquivo de Log padrão do UFW
+/var/log/syslog    <-- Logs do UFW no sistema (usar o filtro: cat /var/log/syslog | grep -i ufw)
+/var/log/kern.log  <-- Logs do UFW no Kernel (usar o filtro: cat /var/log/syslog | grep -i ufw)
 ```
 
 ---
