@@ -305,3 +305,64 @@ sudo ufw status numbered
 #Testando o acesso via Navegador dos protocolos HTTP e HTTPS
 firefox ou google chrome: http://endereço_ipv4_ubuntuserver:3000
 firefox ou google chrome: https://endereço_ipv4_ubuntuserver:10000
+
+```
+
+# AUDITORIA DE LOGS - Melhorando a Segurança e Logs Detalhados do TCPWrappers no Ubuntu Server
+
+## editando o arquivo de configuração do TCPWrappers Hosts.Deny
+
+Aqui registra log daquilo que foi NEGADO (DENY) , então se toiver algo registrado no diretorio deve ser verificado imediatamente a tentativa de origem do log
+
+
+`path: cd /etc/hosts.deny`
+
+```bash
+#editando o arquivo de configuração do TCPWrappers Hosts.Deny
+sudo vim /etc/hosts.deny
+
+# alterar as informações na linha 17
+ALL: ALL: spawn /bin/echo "$(date) | Serviço Remoto %d | Host Remoto %c | Porta Remota %r | Processo Local %p" >> /var/log/hosts-deny.log
+```
+
+## editando o arquivo de configuração do TCPWrappers Hosts.Allow 
+
+irá registrar os logs do que é LIBERADO (ALLOW)
+
+`path: cd /etc/hosts.allow`
+
+Explicação:
+  - sshd: → aplica para o serviço SSH.
+  - ALL: → qualquer host remoto.
+  - spawn /bin/echo ... >> /var/log/hosts-allow.log → escreve cada tentativa de conexão no arquivo /var/log/hosts-allow.log.
+
+```bash
+#editando o arquivo de configuração do TCPWrappers Hosts.Allow
+sudo vim /etc/hosts.allow
+
+# alterar as informações na linha 10
+sshd: ALL: spawn /bin/echo "$(date) | Serviço Remoto %d | Host Remoto %c | Porta Remota %r | Processo Local %p" >> /var/log/hosts-allow.log
+
+```
+>  OBSERVAÇÃO: ALTERAR A REDE CONFORME A SUA NECESSIDADE
+
+
+# Utilizando o comando LNAV (Logfile Navigator) no Ubuntu Server
+Util pra lod do docker 
+
+Documentação Oficial do Logfile Navigator: https://docs.lnav.org/en/latest/index.html
+
+```bash
+#Principais teclas de atalho do comando lnav
+A) Ctrl-u ou Ctrl-d: Role para cima e para baixo uma página de cada vez.
+B) g (minúsculo): Vá para o início do arquivo de log.
+C) G (maiúsculo): Vá para o final do arquivo de log.
+D) q (minúsculo): Sair do Logfile Navigator (Quit).
+E) e (minúsculo) ou E (maiúsculo): Encontrando erros nos arquivos.
+
+#verificando os Log's de acesso remoto do servidor Ubuntu com o comando lnav
+sudo lnav /var/log/auth.log
+sudo lnav /var/log/syslog
+sudo lnav /var/log/hosts-deny.log
+sudo lnav /var/log/hosts-allow.log
+sudo lnav /var/log/ufw.log
