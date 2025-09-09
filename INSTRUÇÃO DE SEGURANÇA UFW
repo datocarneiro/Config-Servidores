@@ -269,3 +269,66 @@ ping google.com
 
 #Atualizando as Listas do Sources.List do Apt
 sudo apt update
+
+```
+
+# Liberando (ALLOW) as Entradas (INCOMING) Básicas do UFW no Ubuntu Server
+> ⚠️ OBSERVAÇÃO IMPORTANTE: por padrão, o UFW no Ubuntu Server adiciona automaticamente regras de IPv6 para regras criadas de forma simples ou básica.
+
+> ⚠️ OBSERVAÇÃO IMPORTANTE: quando você utilizar a opção: comment (comentário) do UFW é recomendo não utilizar acentuação e sempre dentro de Aspas Simples (não crase).
+
+> ⚠️ OBSERVAÇÃO IMPORTANTE: mesmo quando você habilita os recursos de Log do UFW, nem todos os Logs são registrado no arquivo: /var/log/ufw.log, para resolver esse problema você pode adicionar as opções: log (LOGAR) ou log-all (LOGAR TUDO) nas regras de firewall.
+
+```bash
+#Regra de liberação (ALLOW) de Entrada (IN) Logando Tudo (LOG-ALL) do Protocolo SSH (22/tcp)
+sudo ufw allow in log-all 22/tcp comment 'Liberando a entrada do acesso remoto via SSH'
+
+#Regra de liberação (ALLOW) de Entrada (IN) do Protocolo HTTP (80/tcp)
+sudo ufw allow in 80/tcp comment 'Liberando a entrada do protocolo HTTP'
+
+#Verificando as Regras Detalhadas padrão do UFW
+sudo ufw status verbose
+
+#Verificando as Regras Detalhadas padrão do UFW em modo Numerado
+sudo ufw status numbered
+
+#Testando as portas de conexões remotas do SSH e HTTP via Telnet, Netcat ou NC
+#opção do comando netcat: -v (verbose)
+#opção do comando nc: -v (verbose)
+telnet 172.16.1.20 22
+telnet 172.16.1.20 80
+netcat -v 172.16.1.20 22
+netcat -v 172.16.1.20 80
+nc -v 172.16.1.20 22
+nc -v 172.16.1.20 80
+
+#Acessando remotamente o Ubuntu Server via SSH
+ssh vaamonde@172.16.1.20
+
+#Testando o acesso via Navegador do Protocolo HTTP
+firefox ou google chrome: http://endereço_ipv4_ubuntuserver
+15_ Liberando (ALLOW) as Entradas (INCOMING) por Sub-rede ou Endereço IPv4 do UFW no Ubuntu Server
+
+```
+> ⚠️ OBSERVAÇÃO IMPORTANTE: por padrão, o UFW no Ubuntu Server "NÃO" adiciona automaticamente regras de IPv6 para as regras criadas de forma avançada ou complexa
+
+> ⚠️ OBSERVAÇÃO IMPORTANTE: quando você utilizar a opção: comment (comentário) do UFW é recomendo não utilizar acentuação e sempre dentro de Aspas Simples (não crase).
+
+> ⚠️ OBSERVAÇÃO IMPORTANTE: nas opções FROM (ORIGEM/DE) e TO (DESTINO/PARA) você pode usar a opção ANY (QUALQUER) para configurar a regra de firewall menos restritiva, um exemplo seria do procolo HTTP na porta 80: sudo ufw allow from any to any port 80 proto tcp ou utilizar a Interface de entrada: sudo ufw allow in on enp3s0 to any port 80 proto tcp
+
+```bash
+#Liberando (ALLOW) a Sub-rede 172.16.1.0/24 (FROM) acessar o servidor (TO) do Grafana Server na porta (PORT) 3000 via protocolo HTTP (proto tcp)
+sudo ufw allow from 172.16.1.0/24 to 172.16.1.20 port 3000 proto tcp comment 'Liberando a Sub-Rede para acessar o Grafana Server'
+
+#Liberando (ALLOW) o IPv4 172.16.1.114 (FROM) acessar o servidor (TO) do Webmin na porta (PORT) 10000 via protocolo HTTPS (proto tcp)
+sudo ufw allow from 172.16.1.114 to 172.16.1.20 port 10000 proto tcp comment 'Liberando somente o IP para acessar o Webmin'
+
+#Verificando as Regras Detalhadas padrão do UFW
+sudo ufw status verbose
+
+#Verificando as Regras Detalhadas padrão do UFW em modo Numerado
+sudo ufw status numbered
+
+#Testando o acesso via Navegador dos protocolos HTTP e HTTPS
+firefox ou google chrome: http://endereço_ipv4_ubuntuserver:3000
+firefox ou google chrome: https://endereço_ipv4_ubuntuserver:10000
