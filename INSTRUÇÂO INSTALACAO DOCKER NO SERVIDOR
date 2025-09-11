@@ -164,8 +164,11 @@ A doc oficial recomenda criar o grupo `docker` (se não existir) e adicionar seu
 
 ```bash
 sudo groupadd docker
-
+# incluir o usuario corrente (logado)
 sudo usermod -aG docker $USER
+
+# incluir o usuario especifico
+sudo usermod -aG docker <NOME USUARIO>
 
 newgrp docker
 ```
@@ -175,6 +178,22 @@ newgrp docker
 * `sudo groupadd docker` → cria o grupo chamado `docker` (normalmente ele já é criado junto com a instalação, mas esse comando garante).
 * `sudo usermod -aG docker $USER` → adiciona seu usuário atual ao grupo `docker`.
 * `newgrp docker` → aplica a mudança imediatamente **sem precisar reiniciar**.
+
+Verificar o grupo do seu usuário atual
+```bash
+groups
+```
+
+Mostra todos os grupos aos quais o usuário pertence.
+
+Exemplo de saída:
+```bash
+dato docker sudo
+```
+
+Ou, para um usuário específico:
+
+groups nome_do_usuario
 
 📌 *Motivo*:
 

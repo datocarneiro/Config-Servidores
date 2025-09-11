@@ -8,6 +8,85 @@ Portainer Community Edition (CE) é a nossa base. Com mais de meio milhão de us
 
 video instrução: https://www.youtube.com/watch?v=xe_ZZ_hrudw
 
+
+Para verificar se o **Portainer** está instalado e rodando no servidor, você pode usar alguns métodos dependendo de como ele foi instalado (Docker, Docker Compose ou pacote nativo).
+
+---
+
+## Verificar se foi instalado via **Docker**
+
+### Verificar container ativo
+
+```bash
+docker ps | grep portainer
+```
+
+* Se estiver rodando, verá algo como:
+
+```
+CONTAINER ID   IMAGE                    COMMAND       ...   NAMES
+abc123         portainer/portainer-ce   "/portainer"  ...   portainer
+```
+
+* Se não houver saída, o container **não está ativo**.
+
+### Verificar container existente (parado ou ativo)
+
+```bash
+docker ps -a | grep portainer
+```
+
+* Mostra containers mesmo que estejam parados.
+
+### Verificar imagem
+
+```bash
+docker images | grep portainer
+```
+
+* Mostra se a imagem do Portainer está baixada no servidor.
+
+---
+
+## Verificar se foi instalado via **Docker Compose**
+
+* Entre na pasta onde está o `docker-compose.yml`:
+
+```bash
+docker-compose ps
+```
+
+* Procure pelo serviço `portainer`.
+
+---
+
+## Verificar serviço systemd (se foi criado um service)
+
+Se você criou um serviço systemd, como no `portainer.service`:
+
+```bash
+sudo systemctl status portainer
+```
+
+* **Ativo:** `Active: active (running)`
+* **Parado:** `Active: inactive (dead)`
+* **Não existe:** `Unit portainer.service could not be found`
+
+---
+
+## Teste via navegador
+
+* Se o Portainer estiver rodando no servidor, normalmente escuta na porta `9000` (ou configurada por você).
+* Acesse:
+
+```
+http://<IP_DO_SERVIDOR>:9000
+```
+
+* Se abrir a interface web, está instalado e ativo.
+
+---
+
 ## 01_ Pesquisando o Container do Portainer.io CE no Docker Hub
 
 
@@ -15,7 +94,7 @@ Pesquisar de forma manual via Navegador link de consulta do Docker Hub: https://
 
 via CLI: 
 ```bash 
-docker search portainer/portainer-ce:latest`
+docker search portainer/portainer-ce:latest
 ```
 
 ## 02_ Criando o Volume do Portainer.io CE no Docker-CE
@@ -23,10 +102,15 @@ criação do volume do Portainer.io CE
 
 Documentação do Docker-CE: https://docs.docker.com/reference/cli/docker/volume/
 
-opção do comando docker:
- volume (Manage volumes),
-  create (Creates a new volume that 
-#containers can consume and store data in), portainer_data (Volume Name)
+Localização padrão onde vai ficar o volume:
+```bash
+/var/lib/docker/volumes/<nome_do_volume>/_data
+```
+Este caminho pertence ao sistema Docker, normalmente acessível apenas por root ou pelo usuário do Docker (docker group).
+
+Não fica dentro de /home/usuario, a menos que você configure explicitamente um bind mount.
+
+Bind mounts (montagem de diretório do host)
 
 ```bash 
 #criação do volume do Portainer.io CE
@@ -37,7 +121,23 @@ docker volume ls
 
 # inspecionando o volume criado do Portainer.io CE
 docker volume inspect portainer_data
+
+# Acessar como root
+sudo -i cd /var/lib/docker/volumes/
+
+
+# ou apenas:
+sudo ls /var/lib/docker/volumes/
+
+# Mostra os volumes e seus detalhes sem precisar mudar para root.
+sudo ls -l /var/lib/docker/volumes/
 ```
+> Não é recomendável alterar permissões do Docker 
+
+> Evite fazer chmod 777 /var/lib/docker/volumes/ ou algo parecido, pois quebra a segurança do Docker. 
+
+> Sempre use sudo para acessar essa pasta.
+
 # 03_ Criando o Container do Portainer.io CE e utilizando o Volume criado no Docker-CE
 
 Documentação do Docker-CE: https://docs.docker.com/reference/cli/docker/container/
