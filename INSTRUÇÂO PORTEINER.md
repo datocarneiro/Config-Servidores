@@ -65,4 +65,65 @@ sudo lsof -nP -iTCP:'9000' -sTCP:LISTEN
 ```bash
 #baixado o arquivo de serviço do Portainer.io do Github
 #opção do comando wget: -v (verbose), -O (output file)
-sudo wget -v -O /etc/systemd/system/portainer.service https://raw.githubusercontent.com/vaamonde/ubuntu-2404/main/conf/portainer.service
+sudo wget -v -O /etc/systemd/system/portainer.service https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/Arquivos%20de%20Configuracoes/portainer.service
+```
+
+# 07_ Habilitando o Serviço do Portainer.io no Ubuntu Server
+```bash
+#habilitando o serviço do Portainer.io
+sudo systemctl daemon-reload
+sudo systemctl enable portainer
+sudo systemctl stop portainer
+sudo systemctl start portainer
+```
+# 08_ Verificando o Serviço e Versão do Portainer.io no Ubuntu Server
+```bash
+#verificando o serviço do Apache Tomcat Server
+sudo systemctl status portainer
+sudo systemctl restart portainer
+sudo systemctl stop portainer
+sudo systemctl start portainer
+
+#analisando os Log's e mensagens de erro do Servidor do Portainer.io
+#opção do comando journalctl: x (catalog), e (pager-end), u (unit)
+sudo journalctl -xeu portainer
+
+```
+
+# 09_ Liberando a Conexão de Entrada da Porta do Portainer no UFW do Ubuntu Server
+```bash
+#Liberando (allow) e Logando Tudo (LOG-ALL) da Sub-rede 172.16.1.0/24 (FROM) acessar o 
+#servidor (TO) do Portainer na porta (PORT) 9000 via protocolo TCP (PROTO TCP)
+sudo ufw limit log-all from 172.16.1.0/24 to 172.16.1.30 port 9000 proto tcp comment 'Liberando a sub-rede para acessar o Portainer'
+
+#Verificando as Regras Detalhadas padrão do UFW em modo Verboso
+sudo ufw status verbose
+```
+# 10_ Acessando e configurando o Portainer.io via navegador
+
+> OBSERVAÇÃO IMPORTANTE (NÃO COMENTADO NO VÍDEO): SE VOCÊ DEMORAR MUITO PARA ACESSAR PELA PRIMEIRA VEZ O PORTAINER O ERRO DE: Failure: Unable to resolve server settings and status, IRÁ APARECER NA TELA DO SEU NAVEGADOR, PARA RESOLVER ESSA FALHA VOCÊ PRECISAR REINICIAR O CONTAINER DO PORTAINER UTILIZANDO, POR EXEMPLO O COMANDO: sudo systemctl stop portainer E DEPOIS O COMANDO: sudo systemctl start portainer.
+
+```bash
+#utilizar os navegadores para testar o acesso ao Portainer.io 
+firefox ou google chrome: http://endereço_ipv4_ubuntuserver:9000
+
+#Informações que serão solicitadas na configuração via Web do Portainer.io
+Please create the initial administrator user.
+  Username: seu_usuário
+  Password: sua_senha
+  Confirm password: sua_senha
+  (ON) Allow collection of anonymous statistics. You can find more information about this in our privacy policy.
+<Create User>
+
+#configurações iniciais do Portainer.io
+Quick Setup
+  Environment Wizard
+    <Get Started>
+
+#acessando as configurações do Docker-CE do Portainer
+Home
+  Enviroments
+    Docker-CE (local)
+      Dashboard
+
+```
