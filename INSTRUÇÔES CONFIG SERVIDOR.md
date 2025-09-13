@@ -131,11 +131,11 @@ sudo cp -v /etc/ssh/sshd_config /etc/ssh/sshd_config.old
 
 #atualizando arquivo de configuração do Banner do Ubuntu Server do Github
 #opção do comando wget: -v (verbose), -O (output file)
-sudo wget -v -O /etc/issue.net https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/banner-dato-menor.txt
+sudo wget -v -O /etc/issue.net https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/Arquivos%20de%20Configuracoes/banner-dato-menor.txt
 
 #atualizando o arquivo de configuração do OpenSSH Server do Github
 #opção do comando wget: -v (verbose), -O (output file)
-sudo wget -v -O /etc/ssh/sshd_config https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/sshd.config
+sudo wget -v -O /etc/ssh/sshd_config https://raw.githubusercontent.com/datocarneiro/Config-Servidores/refs/heads/main/Arquivos%20de%20Configuracoes/sshd.config
 
 #editando o arquivo de configuração do OpenSSH Server
 sudo vim /etc/ssh/sshd_config
