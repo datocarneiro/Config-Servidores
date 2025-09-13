@@ -194,7 +194,7 @@ sudo journalctl -xeu portainer
 ```bash
 #Liberando (allow) e Logando Tudo (LOG-ALL) da Sub-rede 172.16.1.0/24 (FROM) acessar o 
 #servidor (TO) do Portainer na porta (PORT) 9000 via protocolo TCP (PROTO TCP)
-sudo ufw limit log-all from 172.16.1.0/24 to 172.16.1.30 port 9000 proto tcp comment 'Liberando a sub-rede para acessar o Portainer'
+sudo ufw limit log-all from <IP da REDE, ou SUBREDE OU HOST UNICO> to <IP SERVIDOR> port 9000 proto tcp comment 'Liberando a sub-rede para acessar o Portainer'
 
 #Verificando as Regras Detalhadas padrão do UFW em modo Verboso
 sudo ufw status verbose

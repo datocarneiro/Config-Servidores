@@ -48,7 +48,106 @@ sudo journalctl -xeu ufw
 ```
 ---
 
-## 🔹 Entendendo as Regras
+# Minhas Regras Padrão 
+
+```bash 
+
+sudo apt update
+
+sudo apt install ufw -y
+
+sudo ufw enable
+
+sudo systemctl start ufw
+
+sudo systemctl status ufw
+
+sudo ufw default deny incoming
+
+sudo ufw default deny outgoing
+
+
+
+
+#Liberando a Entrada (IN) Loopback (LO)
+sudo ufw allow in on lo
+
+#Liberando  a Saída  (ON) Loopback (LO)
+sudo ufw allow out on lo
+
+#Regra de liberação (ALLOW) de Saída (OUT) do Protocolo NTP (123/udp)
+sudo ufw allow out 123/udp comment 'Liberando a saida para sincronismo do NTP'
+
+#Regra de liberação de Entrada Limitada com Registro de Log do Protocolo SSH (2222/tcp)
+sudo ufw limit in log-all 2222/tcp comment 'Liberando a entrada do acesso remoto via SSH'
+
+# liberação de Saída da Consulta do Protocolo DNS 
+sudo ufw allow out 53/udp comment 'Liberando a saida para consulta do DNS'
+
+#liberação de Saída (OUT) do Protocolo HTTP (80/tcp)
+sudo ufw allow out 80/tcp comment 'Liberando a saida para navegação do HTTP'
+
+#liberação (ALLOW) de Saída do Protocolo HTTPS (443/tcp)
+sudo ufw allow out 443/tcp comment 'Liberando a saida para navegação do HTTPS'
+_______________________________
+
+
+#Habilitando os Logs das Regras do UFW
+sudo ufw logging on
+
+#Configurando o Nível de Log para Médio (MEDIUM)
+sudo ufw logging medium
+
+#editando o arquivo de configuração do TCPWrappers Hosts.Deny
+sudo vim /etc/hosts.deny
+
+    # alterar as informações na linha 17
+    ALL: ALL: spawn /bin/echo "$(date) | Serviço Remoto %d | Host Remoto %c | Porta Remota %r | Processo Local %p" >> /var/log/hosts-deny.log
+
+
+#editando o arquivo de configuração do TCPWrappers Hosts.Allow
+sudo vim /etc/hosts.allow
+
+    # alterar as informações na linha 17
+    sshd: <IP ORIGEM>, <OUTRO IP ORIGEM> : spawn /bin/echo "$(date) | Serviço Remoto %d | Host Remoto %c | Porta Remota %r | Processo Local %p" >> /var/log/hosts-allow.log
+
+_______________________________
+
+# OUTROS 
+
+#Liberando (ALLOW) o IPv4 172.16.1.114 (FROM) acessar o servidor (TO) do Webmin na porta (PORT) 10000 via protocolo HTTPS (proto tcp)
+sudo ufw allow from <IP ORIGEN> to <IP SERVIDOR> port 10000 proto tcp comment 'Liberando somente o IP para acessar o Webmin'
+
+```
+______________________________
+
+
+# Utilizando o comando LNAV (Logfile Navigator) no Ubuntu Server
+Util pra lod do docker 
+
+Documentação Oficial do Logfile Navigator: https://docs.lnav.org/en/latest/index.html
+```bash
+#Principais teclas de atalho do comando lnav
+A) Ctrl-u ou Ctrl-d: Role para cima e para baixo uma página de cada vez.
+B) g (minúsculo): Vá para o início do arquivo de log.
+C) G (maiúsculo): Vá para o final do arquivo de log.
+D) q (minúsculo): Sair do Logfile Navigator (Quit).
+E) e (minúsculo) ou E (maiúsculo): Encontrando erros nos arquivos.
+```
+
+```bash
+
+#verificando os Log's de acesso remoto do servidor Ubuntu com o comando lnav
+sudo lnav /var/log/auth.log
+sudo lnav /var/log/syslog
+sudo lnav /var/log/hosts-deny.log
+sudo lnav /var/log/hosts-allow.log
+sudo lnav /var/log/ufw.log
+```
+___________________________________________________________________________
+
+
+# 🔹 Entendendo as Regras 
 
 O UFW funciona com **regras de permissão ou negação** para serviços, portas ou IPs:
 
