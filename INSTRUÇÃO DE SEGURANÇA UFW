@@ -164,7 +164,7 @@ sudo ufw allow 22          # Permite SSH
 sudo ufw deny 21           # Bloqueia FTP
 sudo ufw allow 80/tcp      # Permite HTTP
 sudo ufw limit 22/tcp      # Limita tentativas SSH
-sudo ufw allow from 192.168.1.100   # Permite acesso de um IP específico
+sudo ufw allow from <IP DA MAQUINA>  # Permite acesso de um IP específico
 ```
 
 
@@ -247,7 +247,7 @@ sudo ufw limit 22/tcp
 4. **Restringir acesso por IP quando possível**:
 
 ```bash
-sudo ufw allow from 192.168.1.100 to any port 22
+sudo ufw allow from <IP DO HOST> to any port 22
 ```
 
 5. **Verificar regras e logs periodicamente**:
@@ -367,15 +367,15 @@ sudo ufw status numbered
 #Testando as portas de conexões remotas do SSH e HTTP via Telnet, Netcat ou NC
 #opção do comando netcat: -v (verbose)
 #opção do comando nc: -v (verbose)
-telnet 172.16.1.20 22
-telnet 172.16.1.20 80
-netcat -v 172.16.1.20 22
-netcat -v 172.16.1.20 80
-nc -v 172.16.1.20 22
-nc -v 172.16.1.20 80
+telnet <IP DA MAQUINA> 22
+telnet <IP DA MAQUINA> 80
+netcat -v <IP DA MAQUINA> 22
+netcat -v <IP DA MAQUINA> 80
+    nc -v <IP DA MAQUINA> 22
+    nc -v <IP DA MAQUINA> 80
 
 #Acessando remotamente o Ubuntu Server via SSH
-ssh vaamonde@172.16.1.20
+ssh <USUARIO>@<IP DO SERVIDOR>
 
 #Testando o acesso via Navegador do Protocolo HTTP
 firefox ou google chrome: http://endereço_ipv4_ubuntuserver
@@ -390,10 +390,10 @@ firefox ou google chrome: http://endereço_ipv4_ubuntuserver
 
 ```bash
 #Liberando (ALLOW) a Sub-rede 172.16.1.0/24 (FROM) acessar o servidor (TO) do Grafana Server na porta (PORT) 3000 via protocolo HTTP (proto tcp)
-sudo ufw allow from 172.16.1.0/24 to 172.16.1.20 port 3000 proto tcp comment 'Liberando a Sub-Rede para acessar o Grafana Server'
+sudo ufw allow from <IP DA REDE/24 ou SUBREDE/24 ou HOST> to <IP SERVIDOR> port 3000 proto tcp comment 'Liberando a Sub-Rede para acessar o Grafana Server'
 
 #Liberando (ALLOW) o IPv4 172.16.1.114 (FROM) acessar o servidor (TO) do Webmin na porta (PORT) 10000 via protocolo HTTPS (proto tcp)
-sudo ufw allow from 172.16.1.114 to 172.16.1.20 port 10000 proto tcp comment 'Liberando somente o IP para acessar o Webmin'
+sudo ufw allow from <IP DA REDE/24 ou SUBREDE/24 ou HOST> to <IP SERVIDOR> port 10000 proto tcp comment 'Liberando somente o IP para acessar o Webmin'
 
 #Verificando as Regras Detalhadas padrão do UFW
 sudo ufw status verbose
