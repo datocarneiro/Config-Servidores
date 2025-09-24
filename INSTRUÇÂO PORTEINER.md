@@ -6,8 +6,6 @@ Site Oficial do Portainer.io: https://www.portainer.io/
 O QUE É E PARA QUE SERVER O PORTAINER.IO: 
 Portainer Community Edition (CE) é a nossa base. Com mais de meio milhão de usuários regulares, o CE é um poderoso conjunto de ferramentas de código aberto que permite criar e gerenciar facilmente contêineres no Docker, Docker Swarm, Kubernetes e Azure ACI.
 
-video instrução: https://www.youtube.com/watch?v=xe_ZZ_hrudw
-
 
 Para verificar se o **Portainer** está instalado e rodando no servidor, você pode usar alguns métodos dependendo de como ele foi instalado (Docker, Docker Compose ou pacote nativo).
 
