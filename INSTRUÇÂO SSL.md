@@ -9,6 +9,15 @@
 > ⚠ OBSERVAÇÂO:Em servidores Linux com SSH, não usamos diretamente “SSL”, e sim chaves SSH, que também usam criptografia assimétrica (par de chave pública e privada) para autenticar de forma segura.
 
 
+```css
+┌───────────┐      Internet/LAN       ┌────────────┐
+│ Laptop    │────────────────────────►│            │
+│ PC Interno│────────────────────────►│  Servidor  │
+│ Celular   │────────────────────────►│            │
+└───────────┘                         └────────────┘
+Cada cliente → chave própria → chave pública em ~/.ssh/authorized_keys
+```
+
 
 
 ```bash
